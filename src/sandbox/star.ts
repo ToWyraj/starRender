@@ -3,11 +3,16 @@ import Draw from "@/core/aurora/draw";
 import { randomColor } from "@/utils/utils";
 
 const RADIUS_MULTI = 2; // size multiplier
-const GRAVITY_RADIUS = 400; // gravity effect size
+const GRAVITY_RADIUS = 100; // gravity effect size
 const GRAVITY_RADIUS_SQR = GRAVITY_RADIUS * GRAVITY_RADIUS; // squared
-const PULL = 0.25; // pull force
-const SPIN = 0.25; // spin force
-const FRICTION = 0.985; // friction
+const PULL = 0.35; // pull force
+const SPIN = 0.15; // spin force
+const FRICTION = 0.98; // friction
+const BASE_ILLU = 0.2; // Illu when idle
+const SPEED_ILLU = 0.5; // speed illu multiplier
+const MAX_ILLU = 2.5; // max illu
+const MIN_GLOW = 2.5; // glow min
+const MAX_GLOW = 25; // glow max
 export default class Star {
   public position: Position3D;
   private velocity: Position2D;
@@ -33,14 +38,7 @@ export default class Star {
     this.radius = Math.random() * RADIUS_MULTI + 0.5;
     this.color = [...randomColor(), Math.floor(Math.random() * 256)];
   }
-  public draw() {
-    Draw.rect({
-      position: this.position,
-      size: { width: this.radius, height: this.radius },
-      tint: [this.color[0], this.color[1], this.color[2], this.color[3]],
-      emissive: 3,
-    });
-  }
+
   public update(mouse: Position2D, canvasSize: Size2D) {
     const dx = mouse.x - this.position.x;
     const dy = mouse.y - this.position.y;
@@ -73,5 +71,20 @@ export default class Star {
 
     if (this.position.y < 0) this.position.y = canvasSize.height;
     else if (this.position.y > canvasSize.height) this.position.y = 0;
+  }
+  public draw() {
+    const intensity = Math.min(BASE_ILLU + this.speed * SPEED_ILLU, MAX_ILLU);
+    const r = Math.floor(Math.min(this.color[0] * intensity));
+    const g = Math.floor(Math.min(this.color[1] * intensity));
+    const b = Math.floor(Math.min(this.color[2] * intensity));
+    const a = this.color[3];
+    const decay = Math.exp(-intensity * 4);
+    const finalEmissive = MIN_GLOW + MAX_GLOW * decay;
+    Draw.rect({
+      position: this.position,
+      size: { width: this.radius, height: this.radius },
+      tint: [r, g, b, a],
+      emissive: finalEmissive,
+    });
   }
 }

@@ -11,7 +11,10 @@ for (let index = 0; index < STARS_COUNT; index++) {
 }
 
 Engine.update(() => {
+  const mouse = Engine.getMousePos();
+  const canvasSize = Engine.getCanvasSize();
   stars.forEach((star) => {
+    star.update(mouse, canvasSize);
     star.draw();
   });
 });

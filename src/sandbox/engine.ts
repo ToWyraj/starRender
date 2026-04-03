@@ -19,6 +19,8 @@ const CONFIG = auroraConfig({
   },
 });
 export default class Engine {
+  private static mouse: Position2D = { x: -1000, y: -1000 };
+
   private static gameLoop: () => void = () => {};
 
   public static async init() {
@@ -29,6 +31,10 @@ export default class Engine {
     window.addEventListener("resize", () => {
       Aurora.canvas.width = window.innerWidth;
       Aurora.canvas.height = window.innerHeight;
+    });
+    window.addEventListener("mousemove", (e) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
     });
   }
   public static start() {
@@ -42,5 +48,12 @@ export default class Engine {
   }
   public static update(loop: () => void) {
     this.gameLoop = loop;
+  }
+  public static getMousePos() {
+    return this.mouse;
+  }
+  public static getCanvasSize() {
+    const canvas = Aurora.canvas;
+    return { width: canvas.width, height: canvas.height };
   }
 }

@@ -15,7 +15,7 @@ const CONFIG = auroraConfig({
     drawOrigin: "center",
     sortOrder: "y+x+z",
     renderRes: "1920x1080",
-    canvasColor: [100, 0, 0, 255],
+    canvasColor: [0, 0, 0, 255],
   },
 });
 export default class Engine {
